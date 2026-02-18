@@ -5,16 +5,18 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+node_modules
+
 ############################
 # ENV FILES
 ############################
 .env*
 !.env.example
+.env*.local
 
 ############################
 # FRONTEND (Next.js)
 ############################
-frontend/node_modules
 frontend/.next
 frontend/out
 frontend/build
@@ -26,7 +28,6 @@ frontend/next-env.d.ts
 ############################
 # BACKEND (Node.js)
 ############################
-backend/node_modules
 backend/dist
 backend/build
 backend/coverage
