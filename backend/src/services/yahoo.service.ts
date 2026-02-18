@@ -12,8 +12,10 @@ export async function fetchYahooQuote({
   const cached = getCached<YahooQuote>(cacheKey);
   if (cached) return cached;
 
+  const baseUrl = process.env.YAHOO_BASE_URL;
+
   const suffix = exchange === "NSE" ? "NS" : "BO";
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}.${suffix}?interval=1d&range=1d`;
+  const url = `${baseUrl}${symbol}.${suffix}?interval=1d&range=1d`;
 
   const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
   if (!res.ok) throw new Error(`Yahoo API failed for ${symbol}`);

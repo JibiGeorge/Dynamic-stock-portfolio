@@ -1,5 +1,8 @@
 import { getCached, setCache } from "../utils/cache";
 import { GoogleFinanceData } from "../types/stock.types";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export async function fetchGoogleFinanceData({
   symbol,
@@ -12,8 +15,10 @@ export async function fetchGoogleFinanceData({
   const cached = getCached<GoogleFinanceData>(cacheKey);
   if (cached) return cached;
 
+  const baseUrl = process.env.GOOGLE_FINANCE_BASE_URL;
+
   const suffix = exchange === "NSE" ? "NSE" : "BOM";
-  const url = `https://www.google.com/finance/quote/${symbol}:${suffix}`;
+  const url = `${baseUrl}${symbol}:${suffix}`;
 
   const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
   if (!res.ok) throw new Error(`Google Finance failed for ${symbol}`);
