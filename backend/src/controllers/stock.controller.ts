@@ -12,7 +12,10 @@ export async function getStockData(
     const { symbols } = req.body;
 
     if (!symbols || !Array.isArray(symbols)) {
-      return res.status(400).json({ error: "symbols array is required" });
+      return res.status(400).json({
+        success: false,
+        error: "symbols array is required",
+      });
     }
 
     const [yahooResults, googleResults] = await Promise.all([
@@ -21,22 +24,45 @@ export async function getStockData(
     ]);
 
     const data: Record<string, any> = {};
+    let hasError = false;
 
     for (const symbol of symbols) {
+      const yahooData = yahooResults.get(symbol);
+      const googleData = googleResults.get(symbol);
+
+      if (
+        (yahooData as any)?.error ||
+        (googleData as any)?.error
+      ) {
+        hasError = true;
+      }
+
       data[symbol] = {
-        ...(yahooResults.get(symbol) ?? { cmp: null }),
-        ...(googleResults.get(symbol) ?? {
-          peRatio: null,
-          latestEarnings: null,
-        }),
+        ...(yahooData ?? {}),
+        ...(googleData ?? {}),
       };
     }
 
-    res.json({ success: true, data });
+    if (hasError) {
+      return res.status(207).json({
+        success: false,
+        message: "Partial data retrieved",
+        data,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+
   } catch (error) {
-    res.status(500).json({
+    return res.status(503).json({
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error:
+        error instanceof Error
+          ? error.message
+          : "External API service unavailable",
     });
   }
 }

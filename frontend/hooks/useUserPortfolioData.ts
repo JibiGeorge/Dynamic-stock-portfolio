@@ -4,6 +4,7 @@ import { initialHoldings } from "@/data/portfolioData";
 import { StockHolding } from "@/types/table.types";
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 const REFRESH_INTERVAL = Number(
     process.env.NEXT_PUBLIC_REFRESH_INTERVAL ?? 15000
@@ -13,8 +14,10 @@ export function usePortfolioData() {
 
     const [holdings, setHoldings] = useState<StockHolding[]>(initialHoldings);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const fetchStockData = useCallback(async () => {
+        setIsRefreshing(true);
         try {
             const symbols = initialHoldings.map((h) => h.symbol);
 
@@ -52,6 +55,9 @@ export function usePortfolioData() {
             );
         } catch (err: any) {
             console.error("Failed to fetch stock data:", err);
+            toast("Network error, Please try again...")
+        } finally {
+            setIsRefreshing(false);
         }
     }, []);
 
@@ -63,5 +69,5 @@ export function usePortfolioData() {
         };
     }, [fetchStockData]);
 
-    return { holdings, refetch: fetchStockData };
+    return { holdings, refetch: fetchStockData, isRefreshing };
 }

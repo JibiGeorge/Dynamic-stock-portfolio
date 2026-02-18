@@ -3,17 +3,25 @@ export async function fetchBatch<T>(
   fetcher: (s: string) => Promise<T>,
   batchSize = 3,
   delayMs = 500
-): Promise<Map<string, T>> {
-  const results = new Map<string, T>();
+): Promise<Map<string, T | { error: string }>> {
+
+  const results = new Map<string, T | { error: string }>();
 
   for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
 
     const batchResults = await Promise.all(
-      batch.map(async (item) => ({
-        item,
-        result: await fetcher(item),
-      }))
+      batch.map(async (item) => {
+        try {
+          const result = await fetcher(item);
+          return { item, result };
+        } catch (error: any) {
+          return {
+            item,
+            result: { error: error.message || "Fetch failed" },
+          };
+        }
+      })
     );
 
     for (const { item, result } of batchResults) {

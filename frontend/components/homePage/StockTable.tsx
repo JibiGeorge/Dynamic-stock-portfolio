@@ -34,11 +34,9 @@ function formatPercent(val: number | null): string {
 }
 
 
-const StockTable = () => {
+const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
 
     const columnHelper = createColumnHelper<StockHolding>();
-
-    const { holdings } = usePortfolioData();
 
     const totalInvestment = useMemo(
         () => holdings.reduce((sum, h) => sum + getInvestment(h), 0),
