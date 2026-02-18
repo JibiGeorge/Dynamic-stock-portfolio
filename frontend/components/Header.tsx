@@ -3,20 +3,20 @@
 import React, { useState } from 'react'
 import Typography from './ui/Typography'
 import { RefreshCw } from 'lucide-react'
+import { usePortfolio } from '@/context/PortfolioContext'
 
-const Header = ({refetch, isRefreshing}:{
-    refetch: ()=> void,
-    isRefreshing: boolean;
-}) => {
+const Header = () => {
+
+    const { refetch, isLoading } = usePortfolio();
     return (
-        <header className='border-b bg-card/50 border-border'>
+        <header className='border-b bg-card/50 border-border backdrop-blur-sm sticky top-0 z-10'>
             <div className='container max-w-7xl mx-auto px-4 py-4 flex items-center justify-between'>
                 <Typography variant='h4' className='font-bold text-foreground'>Portfolio Dashboard</Typography>
                 <button
                     onClick={refetch}
-                    disabled={isRefreshing}
-                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors disabled:opacity-50 ${isRefreshing ? 'cursor-no-drop' : 'cursor-pointer'}`}>
-                    <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                    disabled={isLoading}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors disabled:opacity-50 ${isLoading ? 'cursor-no-drop' : 'cursor-pointer'}`}>
+                    <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
                     Refresh
                 </button>
             </div>

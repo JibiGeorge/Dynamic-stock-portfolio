@@ -1,13 +1,13 @@
 "use client"
 
+import Disclaimer from "@/components/homePage/Disclaimer";
 import StockTableData from "@/components/homePage/stockTableData";
 import SummaryCards from "@/components/homePage/summaryCards";
-import { usePortfolioData } from "@/hooks/useUserPortfolioData";
-import Image from "next/image";
+import { usePortfolio } from "@/context/PortfolioContext";
 
 export default function Home() {
 
-  const { holdings, refetch } = usePortfolioData();
+  const { holdings } = usePortfolio();
 
   return (
     <>
@@ -16,6 +16,9 @@ export default function Home() {
 
       {/* Stock Table */}
       <StockTableData holdings={holdings} />
+
+      {/* Disclaimer */}
+      <Disclaimer/>
     </>
   );
 }

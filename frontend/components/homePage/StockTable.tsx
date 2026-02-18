@@ -4,10 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Typography from '../ui/Typography'
 import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, getExpandedRowModel, getGroupedRowModel, useReactTable } from '@tanstack/react-table';
 import { StockHolding } from '@/types/table.types';
-import { initialHoldings } from '@/data/portfolioData';
-import axios from 'axios';
 import { getInvestment, getPresentValue } from './summaryCards';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export function getGainLoss(stock: StockHolding): number | null {
     const pv = getPresentValue(stock);
@@ -48,7 +45,7 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
             columnHelper.accessor("sector", {
                 header: "Sector",
                 cell: (info) => (
-                    <span className="text-sm font-medium text-muted-foreground">{info.getValue()}</span>
+                    <span className="text-sm font-medium text-muted-foreground"></span>
                 ),
             }),
             columnHelper.accessor("name", {
@@ -107,7 +104,7 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
                 header: "PE Ratio",
                 cell: (info) => {
                     if (info.row.original.isLoading) return <span className="ticker-pulse text-muted-foreground text-sm">…</span>;
-          return <span className="font-mono-numbers text-sm">{info.getValue()?.toFixed(1) ?? "—"}</span>;
+                    return <span className="font-mono-numbers text-sm">{info.getValue()?.toFixed(1) ?? "—"}</span>;
                 }
             }),
 
@@ -153,7 +150,7 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
                             return (
                                 <tr
                                     key={row.id}
-                                    className="bg-muted/50 cursor-pointer hover:bg-muted transition-colors"
+                                    className="bg-muted/50 hover:bg-muted transition-colors"
                                 >
                                     <td colSpan={columns.length} className="px-4 py-2.5">
                                         <div className="flex items-center gap-2">
@@ -161,7 +158,7 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
                                         </div>
                                     </td>
                                 </tr>
-                                
+
                             );
                         }
                         return (

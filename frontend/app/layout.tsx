@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { ThemeProvider } from "@/Provider/ThemeProvider";
 import { ToastContainer } from 'react-toastify';
+import { PortfolioProvider } from "@/context/PortfolioContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,12 +33,14 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <ToastContainer />
+          <PortfolioProvider>
           <div className="min-h-screen bg-background">
             <Header />
             <main className="container max-w-7xl mx-auto px-4 py-6 space-y-6">
               {children}
             </main>
           </div>
+          </PortfolioProvider>
         </ThemeProvider>
       </body>
     </html>
