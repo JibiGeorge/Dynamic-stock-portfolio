@@ -11,7 +11,7 @@ node_modules
 # ENV FILES
 ############################
 .env*
-!.env.example
+!.env.sample
 .env*.local
 
 ############################
