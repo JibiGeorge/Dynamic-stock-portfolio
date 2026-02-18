@@ -3,12 +3,11 @@
 import React, { useState } from 'react'
 import Typography from './ui/Typography'
 import { RefreshCw } from 'lucide-react'
-import { usePortfolioData } from '@/hooks/useUserPortfolioData'
 
-const Header = () => {
-
-    const { refetch, isRefreshing } = usePortfolioData();
-
+const Header = ({refetch, isRefreshing}:{
+    refetch: ()=> void,
+    isRefreshing: boolean;
+}) => {
     return (
         <header className='border-b bg-card/50 border-border'>
             <div className='container max-w-7xl mx-auto px-4 py-4 flex items-center justify-between'>

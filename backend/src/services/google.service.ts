@@ -1,25 +1,22 @@
 import { getCached, setCache } from "../utils/cache";
 import { GoogleFinanceData } from "../types/stock.types";
 
-export async function fetchGoogleFinanceData(
-  symbol: string
-): Promise<GoogleFinanceData> {
-  const cacheKey = `google_${symbol}`;
+export async function fetchGoogleFinanceData({
+  symbol,
+  exchange,
+}: {
+  symbol: string;
+  exchange: "NSE" | "BSE";
+}): Promise<GoogleFinanceData> {
+  const cacheKey = `google_${exchange}_${symbol}`;
   const cached = getCached<GoogleFinanceData>(cacheKey);
   if (cached) return cached;
 
-  const url = `https://www.google.com/finance/quote/${symbol}:NSE`;
+  const suffix = exchange === "NSE" ? "NSE" : "BOM";
+  const url = `https://www.google.com/finance/quote/${symbol}:${suffix}`;
 
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error(`Google Finance failed for ${symbol}`);
-  }
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+  if (!res.ok) throw new Error(`Google Finance failed for ${symbol}`);
 
   const html = await res.text();
 

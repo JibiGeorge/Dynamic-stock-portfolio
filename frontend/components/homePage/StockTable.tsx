@@ -2,12 +2,12 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Typography from '../ui/Typography'
-import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, getExpandedRowModel, getGroupedRowModel, useReactTable } from '@tanstack/react-table';
 import { StockHolding } from '@/types/table.types';
 import { initialHoldings } from '@/data/portfolioData';
 import axios from 'axios';
-import { usePortfolioData } from '@/hooks/useUserPortfolioData';
 import { getInvestment, getPresentValue } from './summaryCards';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export function getGainLoss(stock: StockHolding): number | null {
     const pv = getPresentValue(stock);
@@ -45,6 +45,12 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
 
     const columns = useMemo<ColumnDef<StockHolding, any>[]>(
         () => [
+            columnHelper.accessor("sector", {
+                header: "Sector",
+                cell: (info) => (
+                    <span className="text-sm font-medium text-muted-foreground">{info.getValue()}</span>
+                ),
+            }),
             columnHelper.accessor("name", {
                 header: "Particulars (Stock Name)",
                 cell: (info) => <Typography variant='bodySmall' className={`whitespace-nowrap text-foreground `}>{info.getValue()}</Typography>
@@ -82,7 +88,7 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
 
             columnHelper.accessor("presentValue", {
                 header: "Present Value",
-                cell: (info) => <Typography variant='bodySmall' className={`whitespace-nowrap text-foreground `}>{info.getValue() ? `₹ ${info.getValue()}` : "-"}</Typography>
+                cell: (info) => <Typography variant='bodySmall' className={`whitespace-nowrap text-foreground `}>{info.getValue() ? `₹ ${info.getValue().toFixed(2)}` : "-"}</Typography>
             }),
 
             columnHelper.accessor("gainLoss", {
@@ -99,7 +105,10 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
 
             columnHelper.accessor("peRatio", {
                 header: "PE Ratio",
-                cell: (info) => <Typography variant='bodySmall' className={`whitespace-nowrap text-foreground `}>{info.getValue() ?? "-"}</Typography>
+                cell: (info) => {
+                    if (info.row.original.isLoading) return <span className="ticker-pulse text-muted-foreground text-sm">…</span>;
+          return <span className="font-mono-numbers text-sm">{info.getValue()?.toFixed(1) ?? "—"}</span>;
+                }
             }),
 
             columnHelper.accessor("latestEarnings", {
@@ -114,6 +123,14 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
         data: holdings,
         columns,
         getCoreRowModel: getCoreRowModel(),
+
+        getGroupedRowModel: getGroupedRowModel(),
+        getExpandedRowModel: getExpandedRowModel(),
+        groupedColumnMode: false,
+        initialState: {
+            grouping: ["sector"],
+            expanded: true,
+        },
     });
 
     return (
@@ -131,15 +148,32 @@ const StockTable = ({ holdings }: { holdings: StockHolding[] }) => {
                     ))}
                 </thead>
                 <tbody>
-                    {table.getRowModel().rows.map((row) => (
-                        <tr key={row.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
-                            {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className="px-4 py-3">
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
-                            ))}
-                        </tr>
-                    ))}
+                    {table.getRowModel().rows.map((row) => {
+                        if (row.getIsGrouped()) {
+                            return (
+                                <tr
+                                    key={row.id}
+                                    className="bg-muted/50 cursor-pointer hover:bg-muted transition-colors"
+                                >
+                                    <td colSpan={columns.length} className="px-4 py-2.5">
+                                        <div className="flex items-center gap-2">
+                                            <Typography variant='body' className='font-bold text-foreground underline underline-offset-4'>{row.groupingValue as string}</Typography>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                            );
+                        }
+                        return (
+                            <tr key={row.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
+                                {row.getVisibleCells().map((cell) => (
+                                    <td key={cell.id} className="px-4 py-3">
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </td>
+                                ))}
+                            </tr>
+                        )
+                    })}
                 </tbody>
             </table>
         </div >

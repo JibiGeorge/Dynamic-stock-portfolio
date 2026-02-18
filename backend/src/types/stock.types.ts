@@ -1,5 +1,7 @@
 export interface YahooQuote {
   cmp: number | null;
+  peRatio?: number | null; 
+  latestEarnings?: string | null;
 }
 
 export interface GoogleFinanceData {
@@ -12,6 +14,11 @@ export interface StockResponse {
   data: Record<string, YahooQuote & GoogleFinanceData>;
 }
 
+export interface StockBody {
+  symbol: string;
+  exchange: "NSE" | "BSE";
+}
+
 export interface StockRequestBody {
-  symbols: string[];
+  stocks: StockBody[];
 }

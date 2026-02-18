@@ -19,10 +19,15 @@ export function usePortfolioData() {
     const fetchStockData = useCallback(async () => {
         setIsRefreshing(true);
         try {
-            const symbols = initialHoldings.map((h) => h.symbol);
+            const stocks = initialHoldings.map((h) => {
+                return {
+                    symbol: h.symbol,
+                    exchange: h.exchange
+                }
+            });
 
             const response = await axios.post(process.env.NEXT_PUBLIC_BACKEND_URL as string,
-                { symbols }
+                { stocks }
             );
 
             const data = response.data;
@@ -34,7 +39,8 @@ export function usePortfolioData() {
             // ✅ FIX 2: Update safely
             setHoldings((prev) =>
                 prev.map((stock) => {
-                    const d = data.data[stock.symbol];
+                    const key = `${stock.symbol}:${stock.exchange}`;
+                    const d = data.data[key];
                     if (!d) return stock;
 
                     const cmp = d.cmp ?? stock.cmp;
