@@ -1,4 +1,5 @@
-import SummaryCards from "@/components/homePage";
+import StockTableData from "@/components/homePage/stockTableData";
+import SummaryCards from "@/components/homePage/summaryCards";
 import Image from "next/image";
 
 export default function Home() {
@@ -6,6 +7,9 @@ export default function Home() {
     <>
       {/* Summary Cards (Investment, Present Value, Gain/Loss) */}
       <SummaryCards />
+
+      {/* Stock Table */}
+      <StockTableData />
     </>
   );
 }
