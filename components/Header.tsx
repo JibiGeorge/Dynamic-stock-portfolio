@@ -6,7 +6,8 @@ import { RefreshCw } from 'lucide-react'
 
 const Header = () => {
 
-    const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+    
     return (
         <header className='border-b bg-card/50 border-border'>
             <div className='container max-w-7xl mx-auto px-4 py-4 flex items-center justify-between'>

@@ -25,15 +25,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-        <div className="min-h-screen bg-background">
-          <Header/>
-          {children}
-        </div>
+          <div className="min-h-screen bg-background">
+            <Header />
+            <main className="container max-w-7xl mx-auto px-4 py-6 space-y-6">
+              {children}
+            </main>
+          </div>
         </ThemeProvider>
       </body>
     </html>

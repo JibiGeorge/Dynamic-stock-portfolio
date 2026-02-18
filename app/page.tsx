@@ -1,9 +1,11 @@
+import SummaryCards from "@/components/homePage";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div>
-      Dynamic Stock Portfolio
-    </div>
+    <>
+      {/* Summary Cards (Investment, Present Value, Gain/Loss) */}
+      <SummaryCards />
+    </>
   );
 }
